@@ -39,7 +39,7 @@ class CMCParser(scrapy.Spider):
         end_date: str = self.settings.get("END_DATE")
 
         for date in self.gen_time_range(start_date, end_date):
-            params = {"convertId": "2781,1", "date": date, "limit": 100, "start": 1}
+            params = {"convertId": "2781,1", "date": date, "limit": 1000, "start": 1}
 
             yield Request(
                 url=CMC_ENDPOINT + "?" + urlencode(params),
@@ -49,6 +49,9 @@ class CMCParser(scrapy.Spider):
 
     def parse_snapshot(self, response) -> Dict[str, Any]:
         data = json.loads(response.body)
+
+        if "data" not in data:
+            yield
 
         parsed_data = [
             {
